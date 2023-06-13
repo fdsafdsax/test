@@ -1,0 +1,24 @@
+      - run:
+          name: Run unittests
+          command: |
+            coverage run --branch --source mmdet -m pytest tests/
+            coverage xml
+            coverage report -m
+
+  build_cu101:
+    machine:
+      image: ubuntu-1604-cuda-10.1:201909-23
+    resource_class: gpu.nvidia.small
+    steps:
+      - checkout
+      - run:
+          name: Install Libraries
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y git ninja-build libglib2.0-0 libsm6 libxrender-dev libxext6 libgl1-mesa-glx
+      - run:
+          name: Configure Python & pip
+          command: |
+            pyenv global 3.7.0
+            pip install --upgrade pip
+            pip install wheel
