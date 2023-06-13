@@ -1,0 +1,22 @@
+   - run:
+          name: Configure Python & pip
+          command: |
+            pip install --upgrade pip
+            pip install wheel
+      - run:
+          name: Install PyTorch
+          command: |
+            python -V
+            pip install torch==<< parameters.torch >>+cpu torchvision==<< parameters.torchvision >>+cpu -f https://download.pytorch.org/whl/torch_stable.html
+      - when:
+          condition:
+            equal: [ "3.9.0", << parameters.python >> ]
+          steps:
+            - run: pip install "protobuf <= 3.20.1" && sudo apt-get update && sudo apt-get -y install libprotobuf-dev protobuf-compiler cmake
+      - run:
+          name: Install mmdet dependencies
+          command: |
+            pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cpu/torch<< parameters.torch >>/index.html
+            pip install -r requirements/tests.txt -r requirements/optional.txt
+            pip install albumentations>=0.3.2 --no-binary imgaug,albumentations
+            pip install git+https://github.com/cocodataset/panopticapi.git
